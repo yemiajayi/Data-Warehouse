@@ -60,7 +60,7 @@ create_table_songplays = ("""
 CREATE TABLE IF NOT EXISTS songplays (
     songplay_id INTEGER IDENTITY(1, 1) PRIMARY KEY,
     start_time bigint NOT NULL REFERENCES time(start_time) sortkey,
-    user_id INTEGER NOT NULL REFERENCES users(user_id),
+    user_id VARCHAR NOT NULL REFERENCES users(user_id),
     level TEXT,
     song_id varchar(50) NOT NULL REFERENCES songs(song_id) distkey,
     artist_id varchar(100) NOT NULL REFERENCES artists(artist_id),
@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS songplays (
 
 create_table_users = ("""
 CREATE TABLE IF NOT EXISTS users (
-    user_id INTEGER PRIMARY KEY,
+    user_id varchar(50) PRIMARY KEY,
     first_name varchar(50),
     last_name varchar(50),
     gender TEXT,
@@ -135,7 +135,7 @@ INSERT INTO songplays (
     location,
     user_agent) 
 SELECT SE.ts AS start_time,
-CAST(SE.userId AS INTEGER) AS user_id,
+SE.userId AS user_id,
 SE.level,
 SS.song_id,
 SS.artist_id,
@@ -165,10 +165,10 @@ INSERT INTO users (
     last_name,
     gender,
     level) 
-SELECT CAST(userId AS INTEGER) AS user_id, firstName AS first_name,
+SELECT userId AS user_id, firstName AS first_name,
 lastName AS last_name, gender, level
 FROM public.staging_event
-WHERE user_id IS NOT NULL
+WHERE userId IS NOT NULL
 ORDER BY user_id;
 """)
 
